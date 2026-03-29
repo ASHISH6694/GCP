@@ -1,5 +1,13 @@
 {
 	"name": "adfdbtransform",
+	"properties": {
+		"globalParameters": {
+			"Inputcontainername_ADLS_landing": {
+				"type": "string",
+				"value": "landing"
+			}
+		}
+	},
 	"location": "centralindia",
 	"identity": {
 		"type": "SystemAssigned",
