@@ -5,6 +5,14 @@
 			"referenceName": "LS_ADLSTOSQLServer_Sink",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"OutputSchema": {
+				"type": "string"
+			},
+			"Outputtable": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": []

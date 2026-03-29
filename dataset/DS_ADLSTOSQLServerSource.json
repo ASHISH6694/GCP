@@ -5,6 +5,17 @@
 			"referenceName": "LS_ADLSTOSQLSERVER",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Inputcontname": {
+				"type": "string"
+			},
+			"InputDirname": {
+				"type": "string"
+			},
+			"Inputfilename": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {

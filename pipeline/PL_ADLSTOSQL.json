@@ -29,7 +29,9 @@
 					"sink": {
 						"type": "AzureSqlSink",
 						"writeBehavior": "insert",
-						"sqlWriterUseTableLock": false
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
 					"translator": {
@@ -44,13 +46,37 @@
 				"inputs": [
 					{
 						"referenceName": "DS_ADLSTOSQLServerSource",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Inputcontname": {
+								"value": "@pipeline().globalParameters.Inputcontainername_ADLS_landing",
+								"type": "Expression"
+							},
+							"InputDirname": {
+								"value": "@pipeline().globalParameters.InputDirname_learning",
+								"type": "Expression"
+							},
+							"Inputfilename": {
+								"value": "@pipeline().globalParameters.InputFilename_sales_details",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
 					{
 						"referenceName": "DS_ADLSTOSQLServer_Sink",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"OutputSchema": {
+								"value": "@pipeline().globalParameters.OutputSQLschema",
+								"type": "Expression"
+							},
+							"Outputtable": {
+								"value": "@pipeline().globalParameters.outputsqltable",
+								"type": "Expression"
+							}
+						}
 					}
 				]
 			}
