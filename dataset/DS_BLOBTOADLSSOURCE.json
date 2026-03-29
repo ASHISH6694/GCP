@@ -1,0 +1,45 @@
+{
+	"name": "DS_BLOBTOADLSSOURCE",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BLOBTOADLS",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"InputContainername": {
+				"type": "string"
+			},
+			"InputDirectoryname": {
+				"type": "string"
+			},
+			"Inputfilename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().Inputfilename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().InputDirectoryname",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().InputContainername",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

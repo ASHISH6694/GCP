@@ -1,0 +1,6 @@
+{
+	"name": "OnpremtoDL",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

@@ -1,0 +1,45 @@
+{
+	"name": "DS_sqltodatalakesinkparamtrize",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sqltodatalakesinkparamtrize",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Containername": {
+				"type": "string"
+			},
+			"dirname": {
+				"type": "string"
+			},
+			"filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().dirname",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().Containername",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

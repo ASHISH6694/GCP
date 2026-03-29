@@ -1,0 +1,45 @@
+{
+	"name": "DS_BLOBTOADLS_SINK",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_BLOBTOADLS_SINK",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"OutputContainername": {
+				"type": "string"
+			},
+			"OutputDirectoryname": {
+				"type": "string"
+			},
+			"OutputFilename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().OutputFilename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().OutputDirectoryname",
+					"type": "Expression"
+				},
+				"fileSystem": {
+					"value": "@dataset().OutputContainername",
+					"type": "Expression"
+				}
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

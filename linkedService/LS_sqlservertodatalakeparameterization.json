@@ -1,0 +1,21 @@
+{
+	"name": "LS_sqlservertodatalakeparameterization",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "ASHISH",
+			"database": "AdventureWorks2025",
+			"encrypt": "optional",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "sa",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiIxZmZhZjk0NS1kMjgxLTRmNzQtYjZmNy1hNGZiNmRkNDA0MTkiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "OnpremtoDL",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

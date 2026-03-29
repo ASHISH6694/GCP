@@ -1,0 +1,31 @@
+{
+	"name": "DS_sqlservertodatalakeparameterization",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_sqlservertodatalakeparameterization",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Schemaname": {
+				"type": "string"
+			},
+			"Tablename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().Schemaname",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Tablename",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
