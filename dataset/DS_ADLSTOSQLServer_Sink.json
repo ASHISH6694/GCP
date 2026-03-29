@@ -1,0 +1,12 @@
+{
+	"name": "DS_ADLSTOSQLServer_Sink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLSTOSQLServer_Sink",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
