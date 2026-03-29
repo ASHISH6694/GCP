@@ -13,6 +13,10 @@
 			"InputFilename_sales_details": {
 				"type": "string",
 				"value": "sales_details.csv"
+			},
+			"OutputSQLschema": {
+				"type": "string",
+				"value": "dbo"
 			}
 		}
 	},
