@@ -5,6 +5,10 @@
 			"Inputcontainername_ADLS_landing": {
 				"type": "string",
 				"value": "landing"
+			},
+			"InputDirname_learning": {
+				"type": "string",
+				"value": "learning"
 			}
 		}
 	},
