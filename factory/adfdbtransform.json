@@ -17,6 +17,10 @@
 			"OutputSQLschema": {
 				"type": "string",
 				"value": "dbo"
+			},
+			"outputsqltable": {
+				"type": "string",
+				"value": "sales_details"
 			}
 		}
 	},
