@@ -9,6 +9,10 @@
 			"InputDirname_learning": {
 				"type": "string",
 				"value": "learning"
+			},
+			"InputFilename_sales_details": {
+				"type": "string",
+				"value": "sales_details.csv"
 			}
 		}
 	},
