@@ -7,14 +7,26 @@
 		},
 		"parameters": {
 			"OutputSchema": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "dbo"
 			},
 			"Outputtable": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "sales_details"
 			}
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": []
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().OutputSchema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().Outputtable",
+				"type": "Expression"
+			}
+		}
 	}
 }
