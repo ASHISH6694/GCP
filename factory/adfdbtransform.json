@@ -1,5 +1,29 @@
 {
 	"name": "adfdbtransform",
+	"properties": {
+		"globalParameters": {
+			"Inputcontainername_ADLS_landing": {
+				"type": "string",
+				"value": "landing"
+			},
+			"InputDirname_learning": {
+				"type": "string",
+				"value": "learning"
+			},
+			"InputFilename_sales_details": {
+				"type": "string",
+				"value": "sales_details.csv"
+			},
+			"OutputSQLschema": {
+				"type": "string",
+				"value": "dbo"
+			},
+			"outputsqltable": {
+				"type": "string",
+				"value": "sales_details"
+			}
+		}
+	},
 	"location": "centralindia",
 	"identity": {
 		"type": "SystemAssigned",
