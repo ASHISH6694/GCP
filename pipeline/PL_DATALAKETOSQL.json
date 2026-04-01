@@ -1,0 +1,110 @@
+{
+	"name": "PL_DATALAKETOSQL",
+	"properties": {
+		"activities": [
+			{
+				"name": "CopyData_DatalaketoSQL",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_DatalaketoSQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"DS_Containername": {
+								"value": "@pipeline().parameters.InputContainername",
+								"type": "Expression"
+							},
+							"DS_Dirname": {
+								"value": "@pipeline().parameters.InputDirName",
+								"type": "Expression"
+							},
+							"DS_Filename": {
+								"value": "@pipeline().parameters.InputFilename",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_AzureSQL",
+						"type": "DatasetReference",
+						"parameters": {
+							"DS_Schemaname": {
+								"value": "@pipeline().parameters.Schemaname",
+								"type": "Expression"
+							},
+							"DS_Tanlename": {
+								"value": "@pipeline().parameters.Tablename",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			}
+		],
+		"parameters": {
+			"InputContainername": {
+				"type": "string",
+				"defaultValue": "landing"
+			},
+			"InputDirName": {
+				"type": "string",
+				"defaultValue": "allcsvfiles"
+			},
+			"InputFilename": {
+				"type": "string",
+				"defaultValue": "SalesData.csv"
+			},
+			"Schemaname": {
+				"type": "string",
+				"defaultValue": "dbo"
+			},
+			"Tablename": {
+				"type": "string",
+				"defaultValue": "SalesData"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-04-01T14:22:07Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
