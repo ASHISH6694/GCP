@@ -71,7 +71,16 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": [],
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{pipeline().parameters.Containername}/@{pipeline().parameters.Dirname}/@{item().name}"
+								},
+								{
+									"name": "Destination",
+									"value": "@{pipeline().parameters.Schemaname}.@{split(item().name, '.')[0]}"
+								}
+							],
 							"typeProperties": {
 								"source": {
 									"type": "DelimitedTextSource",
