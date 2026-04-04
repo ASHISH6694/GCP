@@ -37,6 +37,64 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/dsGetBlobFilemetadata')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_drawin_blob",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Filename": {
+						"type": "string"
+					},
+					"DIRName": {
+						"type": "string"
+					},
+					"Containername": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().DIRName",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().Containername",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_AzSqldatasinc')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_AzureSQLDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/dsdatfile')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -357,6 +415,70 @@
 				},
 				"annotations": [],
 				"lastPublishTime": "2026-04-01T14:22:07Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_Darwinxsample')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetMetaDatadatfile",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DS_Binarygetmetadata",
+								"type": "DatasetReference",
+								"parameters": {
+									"DS_Contname": {
+										"value": "@pipeline().parameters.Meta_Containername",
+										"type": "Expression"
+									},
+									"DS_Dirname": {
+										"value": "@pipeline().parameters.Meta_Directoryname",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobStorageReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Meta_Containername": {
+						"type": "string",
+						"defaultValue": "darwinx"
+					},
+					"Meta_Directoryname": {
+						"type": "string",
+						"defaultValue": "landing"
+					}
+				},
+				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -730,8 +852,6 @@
 					{
 						"name": "ForEach1",
 						"type": "ForEach",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "getFilemetadata",
@@ -795,8 +915,6 @@
 								{
 									"name": "uspDBA_UpsertFileFromBlob_copy1",
 									"type": "SqlServerStoredProcedure",
-									"state": "Inactive",
-									"onInactiveMarkAs": "Succeeded",
 									"dependsOn": [
 										{
 											"activity": "innerGetFileMetadata",
@@ -856,7 +974,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dsdatfile')]"
+				"[concat(variables('factoryId'), '/datasets/dsdatfile')]",
+				"[concat(variables('factoryId'), '/datasets/dsGetBlobFilemetadata')]"
 			]
 		},
 		{

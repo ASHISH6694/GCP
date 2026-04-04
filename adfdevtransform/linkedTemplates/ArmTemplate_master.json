@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS_DATALAKETOSQL'"
 		},
+		"LS_Getmetablobbinary_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_Getmetablobbinary'"
+		},
 		"LS_drawin_blob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_drawin_blob'"
@@ -139,6 +143,9 @@
 					},
 					"LS_DATALAKETOSQL_accountKey": {
 						"value": "[parameters('LS_DATALAKETOSQL_accountKey')]"
+					},
+					"LS_Getmetablobbinary_connectionString": {
+						"value": "[parameters('LS_Getmetablobbinary_connectionString')]"
 					},
 					"LS_drawin_blob_connectionString": {
 						"value": "[parameters('LS_drawin_blob_connectionString')]"

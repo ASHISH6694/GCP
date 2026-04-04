@@ -23,6 +23,9 @@
 		"LS_DATALAKETOSQL_accountKey": {
 			"value": ""
 		},
+		"LS_Getmetablobbinary_connectionString": {
+			"value": ""
+		},
 		"LS_drawin_blob_connectionString": {
 			"value": ""
 		},
