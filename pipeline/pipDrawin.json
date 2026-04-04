@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -73,6 +74,7 @@
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -81,7 +83,7 @@
 							}
 						},
 						{
-							"name": "uspDBA_UpsertFileFromBlob",
+							"name": "uspDBA_UpsertFileFromBlob_copy1",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
@@ -103,23 +105,38 @@
 								"storedProcedureName": "[dbo].[uspDBA_UpsertFileFromBlob]",
 								"storedProcedureParameters": {
 									"FileDate": {
-										"value": "@activity('Get File Metadata').output.lastModified",
+										"value": {
+											"value": "@activity('getFilemetadata').output.lastModified",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"FileDateFormat": {
-										"value": "@formatDateTime(activity('Get File Metadata').output.lastModified, 'yyyyMMdd')",
+										"value": {
+											"value": "@formatDateTime(activity('getFilemetadata').output.lastModified, 'yyyyMMdd')",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"FileExtension": {
-										"value": "@substring(item().name, add(lastIndexOf(item().name, '.'), 1), sub(length(item().name), add(lastIndexOf(item().name, '.'), 1)))",
+										"value": {
+											"value": "@substring(item().name, add(lastIndexOf(item().name, '.'), 1), sub(length(item().name), add(lastIndexOf(item().name, '.'), 1)))",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"FileName": {
-										"value": "@activity('Get File Metadata').output.itemName",
+										"value": {
+											"value": "@activity('getFilemetadata').output.itemName",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"FileSize": {
-										"value": "@activity('Get File Metadata').output.size",
+										"value": {
+											"value": "@activity('getFilemetadata').output.size",
+											"type": "Expression"
+										},
 										"type": "Decimal"
 									}
 								}
