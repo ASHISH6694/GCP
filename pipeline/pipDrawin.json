@@ -44,8 +44,6 @@
 			{
 				"name": "ForEach1",
 				"type": "ForEach",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "getFilemetadata",
@@ -109,8 +107,6 @@
 						{
 							"name": "uspDBA_UpsertFileFromBlob_copy1",
 							"type": "SqlServerStoredProcedure",
-							"state": "Inactive",
-							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [
 								{
 									"activity": "innerGetFileMetadata",
