@@ -1,0 +1,39 @@
+{
+	"name": "DS_Binarygetmetadata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Getmetablobbinary",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"DS_Contname": {
+				"type": "string"
+			},
+			"DS_Dirname": {
+				"type": "string"
+			},
+			"DS_Filename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().DS_Filename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().DS_Dirname",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().DS_Contname",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
