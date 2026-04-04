@@ -1,0 +1,53 @@
+{
+	"name": "PL_Darwinxsample",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetMetaDatadatfile",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_Binarygetmetadata",
+						"type": "DatasetReference",
+						"parameters": {
+							"DS_Contname": {
+								"value": "@pipeline().parameters.Meta_Containername",
+								"type": "Expression"
+							},
+							"DS_Dirname": {
+								"value": "@pipeline().parameters.Meta_Directoryname",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"Meta_Containername": {
+				"type": "string"
+			},
+			"Meta_Directoryname": {
+				"type": "string"
+			}
+		},
+		"annotations": []
+	}
+}
