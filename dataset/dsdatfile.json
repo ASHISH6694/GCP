@@ -5,11 +5,27 @@
 			"referenceName": "LS_drawin_blob",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Containername": {
+				"type": "string"
+			},
+			"Dirname": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "Binary",
 		"typeProperties": {
 			"location": {
-				"type": "AzureBlobStorageLocation"
+				"type": "AzureBlobStorageLocation",
+				"folderPath": {
+					"value": "@dataset().Dirname",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().Containername",
+					"type": "Expression"
+				}
 			}
 		}
 	}
