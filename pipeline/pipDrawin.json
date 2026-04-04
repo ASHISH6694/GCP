@@ -104,40 +104,19 @@
 							"typeProperties": {
 								"storedProcedureName": "[dbo].[uspDBA_UpsertFileFromBlob]",
 								"storedProcedureParameters": {
-									"FileDate": {
+									"pFileName": {
 										"value": {
-											"value": "@activity('getFilemetadata').output.lastModified",
+											"value": "@item().name",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
-									"FileDateFormat": {
+									"pFileSize": {
 										"value": {
-											"value": "@formatDateTime(activity('getFilemetadata').output.lastModified, 'yyyyMMdd')",
+											"value": "@activity('innerGetFileMetadata').output.size",
 											"type": "Expression"
 										},
-										"type": "String"
-									},
-									"FileExtension": {
-										"value": {
-											"value": "@substring(item().name, add(lastIndexOf(item().name, '.'), 1), sub(length(item().name), add(lastIndexOf(item().name, '.'), 1)))",
-											"type": "Expression"
-										},
-										"type": "String"
-									},
-									"FileName": {
-										"value": {
-											"value": "@activity('getFilemetadata').output.itemName",
-											"type": "Expression"
-										},
-										"type": "String"
-									},
-									"FileSize": {
-										"value": {
-											"value": "@activity('getFilemetadata').output.size",
-											"type": "Expression"
-										},
-										"type": "Decimal"
+										"type": "Double"
 									}
 								}
 							},
