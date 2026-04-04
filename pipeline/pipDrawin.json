@@ -7,7 +7,6 @@
 				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "0.12:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -55,7 +54,6 @@
 							"type": "GetMetadata",
 							"dependsOn": [],
 							"policy": {
-								"timeout": "0.12:00:00",
 								"retry": 0,
 								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
@@ -65,20 +63,29 @@
 							"typeProperties": {
 								"dataset": {
 									"referenceName": "dsGetBlobFilemetadata",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"Filename": {
+											"value": "@item().name",
+											"type": "Expression"
+										},
+										"DIRName": {
+											"value": "@pipeline().parameters.pipDirname",
+											"type": "Expression"
+										},
+										"Containername": {
+											"value": "@pipeline().parameters.pipContainername",
+											"type": "Expression"
+										}
+									}
 								},
 								"fieldList": [
 									"itemName",
-									"itemType",
-									"lastModified",
-									{
-										"value": "@item().size",
-										"type": "Expression"
-									}
+									"size"
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
+									"recursive": false,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -98,7 +105,6 @@
 								}
 							],
 							"policy": {
-								"timeout": "0.12:00:00",
 								"retry": 0,
 								"retryIntervalInSeconds": 30,
 								"secureOutput": false,
@@ -116,8 +122,11 @@
 										"type": "String"
 									},
 									"pFileSize": {
-										"value": "@activity('innerGetFileMetadata').output.size  ",
-										"type": "Double"
+										"value": {
+											"value": "@activity('innerGetFileMetadata').output.size",
+											"type": "Expression"
+										},
+										"type": "Int64"
 									}
 								}
 							},
