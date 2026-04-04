@@ -70,7 +70,11 @@
 								"fieldList": [
 									"itemName",
 									"itemType",
-									"lastModified"
+									"lastModified",
+									{
+										"value": "@item().size",
+										"type": "Expression"
+									}
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
@@ -112,10 +116,7 @@
 										"type": "String"
 									},
 									"pFileSize": {
-										"value": {
-											"value": "@activity('innerGetFileMetadata').output.size",
-											"type": "Expression"
-										},
+										"value": "@activity('innerGetFileMetadata').output.size  ",
 										"type": "Double"
 									}
 								}
