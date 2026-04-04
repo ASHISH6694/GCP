@@ -45,11 +45,27 @@
 					"referenceName": "LS_drawin_blob",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"Containername": {
+						"type": "string"
+					},
+					"Dirname": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "Binary",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation"
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "@dataset().Dirname",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().Containername",
+							"type": "Expression"
+						}
 					}
 				}
 			},
@@ -687,14 +703,23 @@
 							"dataset": {
 								"referenceName": "dsdatfile",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"Containername": {
+										"value": "@pipeline().parameters.pipContainername",
+										"type": "Expression"
+									},
+									"Dirname": {
+										"value": "@pipeline().parameters.pipDirname",
+										"type": "Expression"
+									}
+								}
 							},
 							"fieldList": [
 								"childItems"
 							],
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
+								"recursive": false,
 								"enablePartitionDiscovery": false
 							},
 							"formatSettings": {
@@ -705,6 +730,8 @@
 					{
 						"name": "ForEach1",
 						"type": "ForEach",
+						"state": "Inactive",
+						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "getFilemetadata",
@@ -719,6 +746,7 @@
 								"value": "@activity('getFilemetadata').output.childItems",
 								"type": "Expression"
 							},
+							"isSequential": false,
 							"activities": [
 								{
 									"name": "innerGetFileMetadata",
@@ -767,6 +795,8 @@
 								{
 									"name": "uspDBA_UpsertFileFromBlob_copy1",
 									"type": "SqlServerStoredProcedure",
+									"state": "Inactive",
+									"onInactiveMarkAs": "Succeeded",
 									"dependsOn": [
 										{
 											"activity": "innerGetFileMetadata",
