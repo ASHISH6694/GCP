@@ -1,0 +1,75 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adfdevtransform"
+		},
+		"LS_ADLSTOSQLSERVER_accountKey": {
+			"value": ""
+		},
+		"LS_ADLSTOSQLServer_Sink_password": {
+			"value": ""
+		},
+		"LS_AzureSQLDB_password": {
+			"value": ""
+		},
+		"LS_BLOBTOADLS_connectionString": {
+			"value": ""
+		},
+		"LS_BLOBTOADLS_SINK_accountKey": {
+			"value": ""
+		},
+		"LS_DATALAKETOSQL_accountKey": {
+			"value": ""
+		},
+		"LS_drawin_blob_connectionString": {
+			"value": ""
+		},
+		"LS_sqlservertodatalakeparameterization_password": {
+			"value": ""
+		},
+		"LS_sqltodatalakesinkparamtrize_accountKey": {
+			"value": ""
+		},
+		"LS_ADLSTOSQLSERVER_properties_typeProperties_url": {
+			"value": "https://azdatabrickslearning.dfs.core.windows.net/"
+		},
+		"LS_ADLSTOSQLServer_Sink_properties_typeProperties_server": {
+			"value": "adfdevsqlserver.database.windows.net"
+		},
+		"LS_ADLSTOSQLServer_Sink_properties_typeProperties_database": {
+			"value": "free-sql-db"
+		},
+		"LS_ADLSTOSQLServer_Sink_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"LS_AzureSQLDB_properties_typeProperties_server": {
+			"value": "adffree.database.windows.net"
+		},
+		"LS_AzureSQLDB_properties_typeProperties_database": {
+			"value": "free-sql-db-2991689"
+		},
+		"LS_AzureSQLDB_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"LS_BLOBTOADLS_SINK_properties_typeProperties_url": {
+			"value": "https://azdatabrickslearning.dfs.core.windows.net/"
+		},
+		"LS_DATALAKETOSQL_properties_typeProperties_url": {
+			"value": "https://adlshdfc.dfs.core.windows.net"
+		},
+		"LS_sqlservertodatalakeparameterization_properties_typeProperties_server": {
+			"value": "ASHISH"
+		},
+		"LS_sqlservertodatalakeparameterization_properties_typeProperties_database": {
+			"value": "AdventureWorks2025"
+		},
+		"LS_sqlservertodatalakeparameterization_properties_typeProperties_userName": {
+			"value": "sa"
+		},
+		"LS_sqltodatalakesinkparamtrize_properties_typeProperties_url": {
+			"value": "https://azdatabrickslearning.dfs.core.windows.net/"
+		}
+	}
+}

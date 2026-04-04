@@ -1,0 +1,216 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfdevtransform"
+		},
+		"LS_ADLSTOSQLSERVER_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_ADLSTOSQLSERVER'"
+		},
+		"LS_ADLSTOSQLServer_Sink_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_ADLSTOSQLServer_Sink'"
+		},
+		"LS_AzureSQLDB_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_AzureSQLDB'"
+		},
+		"LS_BLOBTOADLS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_BLOBTOADLS'"
+		},
+		"LS_BLOBTOADLS_SINK_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_BLOBTOADLS_SINK'"
+		},
+		"LS_DATALAKETOSQL_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_DATALAKETOSQL'"
+		},
+		"LS_drawin_blob_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LS_drawin_blob'"
+		},
+		"LS_sqlservertodatalakeparameterization_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_sqlservertodatalakeparameterization'"
+		},
+		"LS_sqltodatalakesinkparamtrize_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_sqltodatalakesinkparamtrize'"
+		},
+		"LS_ADLSTOSQLSERVER_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azdatabrickslearning.dfs.core.windows.net/"
+		},
+		"LS_ADLSTOSQLServer_Sink_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adfdevsqlserver.database.windows.net"
+		},
+		"LS_ADLSTOSQLServer_Sink_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "free-sql-db"
+		},
+		"LS_ADLSTOSQLServer_Sink_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_AzureSQLDB_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adffree.database.windows.net"
+		},
+		"LS_AzureSQLDB_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "free-sql-db-2991689"
+		},
+		"LS_AzureSQLDB_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_BLOBTOADLS_SINK_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azdatabrickslearning.dfs.core.windows.net/"
+		},
+		"LS_DATALAKETOSQL_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlshdfc.dfs.core.windows.net"
+		},
+		"LS_sqlservertodatalakeparameterization_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "ASHISH"
+		},
+		"LS_sqlservertodatalakeparameterization_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorks2025"
+		},
+		"LS_sqlservertodatalakeparameterization_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sa"
+		},
+		"LS_sqltodatalakesinkparamtrize_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azdatabrickslearning.dfs.core.windows.net/"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "adfdevtransform_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_ADLSTOSQLSERVER_accountKey": {
+						"value": "[parameters('LS_ADLSTOSQLSERVER_accountKey')]"
+					},
+					"LS_ADLSTOSQLServer_Sink_password": {
+						"value": "[parameters('LS_ADLSTOSQLServer_Sink_password')]"
+					},
+					"LS_AzureSQLDB_password": {
+						"value": "[parameters('LS_AzureSQLDB_password')]"
+					},
+					"LS_BLOBTOADLS_connectionString": {
+						"value": "[parameters('LS_BLOBTOADLS_connectionString')]"
+					},
+					"LS_BLOBTOADLS_SINK_accountKey": {
+						"value": "[parameters('LS_BLOBTOADLS_SINK_accountKey')]"
+					},
+					"LS_DATALAKETOSQL_accountKey": {
+						"value": "[parameters('LS_DATALAKETOSQL_accountKey')]"
+					},
+					"LS_drawin_blob_connectionString": {
+						"value": "[parameters('LS_drawin_blob_connectionString')]"
+					},
+					"LS_ADLSTOSQLSERVER_properties_typeProperties_url": {
+						"value": "[parameters('LS_ADLSTOSQLSERVER_properties_typeProperties_url')]"
+					},
+					"LS_ADLSTOSQLServer_Sink_properties_typeProperties_server": {
+						"value": "[parameters('LS_ADLSTOSQLServer_Sink_properties_typeProperties_server')]"
+					},
+					"LS_ADLSTOSQLServer_Sink_properties_typeProperties_database": {
+						"value": "[parameters('LS_ADLSTOSQLServer_Sink_properties_typeProperties_database')]"
+					},
+					"LS_ADLSTOSQLServer_Sink_properties_typeProperties_userName": {
+						"value": "[parameters('LS_ADLSTOSQLServer_Sink_properties_typeProperties_userName')]"
+					},
+					"LS_AzureSQLDB_properties_typeProperties_server": {
+						"value": "[parameters('LS_AzureSQLDB_properties_typeProperties_server')]"
+					},
+					"LS_AzureSQLDB_properties_typeProperties_database": {
+						"value": "[parameters('LS_AzureSQLDB_properties_typeProperties_database')]"
+					},
+					"LS_AzureSQLDB_properties_typeProperties_userName": {
+						"value": "[parameters('LS_AzureSQLDB_properties_typeProperties_userName')]"
+					},
+					"LS_BLOBTOADLS_SINK_properties_typeProperties_url": {
+						"value": "[parameters('LS_BLOBTOADLS_SINK_properties_typeProperties_url')]"
+					},
+					"LS_DATALAKETOSQL_properties_typeProperties_url": {
+						"value": "[parameters('LS_DATALAKETOSQL_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "adfdevtransform_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_sqlservertodatalakeparameterization_password": {
+						"value": "[parameters('LS_sqlservertodatalakeparameterization_password')]"
+					},
+					"LS_sqltodatalakesinkparamtrize_accountKey": {
+						"value": "[parameters('LS_sqltodatalakesinkparamtrize_accountKey')]"
+					},
+					"LS_sqlservertodatalakeparameterization_properties_typeProperties_server": {
+						"value": "[parameters('LS_sqlservertodatalakeparameterization_properties_typeProperties_server')]"
+					},
+					"LS_sqlservertodatalakeparameterization_properties_typeProperties_database": {
+						"value": "[parameters('LS_sqlservertodatalakeparameterization_properties_typeProperties_database')]"
+					},
+					"LS_sqlservertodatalakeparameterization_properties_typeProperties_userName": {
+						"value": "[parameters('LS_sqlservertodatalakeparameterization_properties_typeProperties_userName')]"
+					},
+					"LS_sqltodatalakesinkparamtrize_properties_typeProperties_url": {
+						"value": "[parameters('LS_sqltodatalakesinkparamtrize_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfdevtransform_ArmTemplate_0')]"
+			]
+		}
+	]
+}
