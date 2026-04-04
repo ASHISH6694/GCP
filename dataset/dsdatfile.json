@@ -1,0 +1,16 @@
+{
+	"name": "dsdatfile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_drawin_blob",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation"
+			}
+		}
+	}
+}

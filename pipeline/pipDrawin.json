@@ -1,0 +1,148 @@
+{
+	"name": "pipDrawin",
+	"properties": {
+		"activities": [
+			{
+				"name": "getFilemetadata",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "dsdatfile",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "getFilemetadata",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('getFilemetadata').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "innerGetFileMetadata",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "dsGetBlobFilemetadata",
+									"type": "DatasetReference"
+								},
+								"fieldList": [
+									"itemName",
+									"itemType",
+									"lastModified"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							}
+						},
+						{
+							"name": "uspDBA_UpsertFileFromBlob",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "innerGetFileMetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[uspDBA_UpsertFileFromBlob]",
+								"storedProcedureParameters": {
+									"FileDate": {
+										"value": "@activity('Get File Metadata').output.lastModified",
+										"type": "String"
+									},
+									"FileDateFormat": {
+										"value": "@formatDateTime(activity('Get File Metadata').output.lastModified, 'yyyyMMdd')",
+										"type": "String"
+									},
+									"FileExtension": {
+										"value": "@substring(item().name, add(lastIndexOf(item().name, '.'), 1), sub(length(item().name), add(lastIndexOf(item().name, '.'), 1)))",
+										"type": "String"
+									},
+									"FileName": {
+										"value": "@activity('Get File Metadata').output.itemName",
+										"type": "String"
+									},
+									"FileSize": {
+										"value": "@activity('Get File Metadata').output.size",
+										"type": "Decimal"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_AzureSQLDB",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"pipContainername": {
+				"type": "string",
+				"defaultValue": "darwinx"
+			},
+			"pipDirname": {
+				"type": "string",
+				"defaultValue": "landing"
+			}
+		},
+		"annotations": []
+	}
+}

@@ -1,0 +1,32 @@
+{
+	"name": "dsBatfile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_drawin_blob",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"dsContainername": {
+				"type": "string"
+			},
+			"dsDirName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": {
+					"value": "@dataset().dsDirName",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().dsContainername",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
