@@ -106,7 +106,7 @@
 								"storedProcedureParameters": {
 									"pFileName": {
 										"value": {
-											"value": "@item().name",
+											"value": "@activity('innerGetFileMetadata').output.itemName",
 											"type": "Expression"
 										},
 										"type": "String"
