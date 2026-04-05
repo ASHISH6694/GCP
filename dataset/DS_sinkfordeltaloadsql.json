@@ -1,0 +1,57 @@
+{
+	"name": "DS_sinkfordeltaloadsql",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_getoldwatermark",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "OrderID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Country",
+				"type": "nvarchar"
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StoreID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CustomerGroup",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Category",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Quantity",
+				"type": "nvarchar"
+			},
+			{
+				"name": "UnitPrice",
+				"type": "nvarchar"
+			},
+			{
+				"name": "DeliveryDate",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "SalesData"
+		}
+	}
+}

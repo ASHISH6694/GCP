@@ -80,7 +80,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "select * from dbo.SalesData where DeliveryDate>@activity('Lookup_getoldwatermark').output.firstRow.WatermarkValue and DeliveryDate<=@activity('Lookup_getnewwatermark').output.NewWaterMark",
+							"value": "SELECT *\nFROM dbo.SalesData\nWHERE DeliveryDate > '@{activity('Lookup_getoldwatermark').output.firstRow.WatermarkValue}'\nAND DeliveryDate <= '@{activity('Lookup_getnewwatermark').output.firstRow.NewWaterMark}'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
@@ -123,8 +123,6 @@
 			{
 				"name": "SP_updateoldwithnewwatermark",
 				"type": "SqlServerStoredProcedure",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "CopydatabetweenbothWatermark",
@@ -140,13 +138,27 @@
 					"secureOutput": false,
 					"secureInput": false
 				},
-				"userProperties": []
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[update_watermark]",
+					"storedProcedureParameters": {
+						"NewWaterMark": {
+							"value": {
+								"value": "@{activity('Lookup_getnewwatermark').output.firstRow.NewWaterMark}",
+								"type": "Expression"
+							},
+							"type": "Datetime"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_getoldwatermark",
+					"type": "LinkedServiceReference"
+				}
 			},
 			{
 				"name": "Copydatatosql_upsert",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "SP_updateoldwithnewwatermark",
@@ -164,8 +176,51 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"enableStaging": false
-				}
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "upsert",
+						"upsertSettings": {
+							"useTempDB": true,
+							"keys": [
+								"OrderID"
+							]
+						},
+						"sqlWriterUseTableLock": false,
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_DeltalakecopytoADLS",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_sinkfordeltaloadsql",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"annotations": []
