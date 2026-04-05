@@ -5,37 +5,17 @@
 			"referenceName": "LS_DeltalakecopytoADLS",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"containername": {
-				"type": "string",
-				"defaultValue": "deltaload"
-			},
-			"dirname": {
-				"type": "string",
-				"defaultValue": "delta"
-			},
-			"filename": {
-				"type": "string",
-				"defaultValue": "customer_data.csv"
-			}
-		},
 		"annotations": [],
 		"type": "DelimitedText",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": {
-					"value": "@dataset().filename",
-					"type": "Expression"
-				},
+				"fileName": "customer_data.csv",
 				"folderPath": {
 					"value": "@formatDateTime(utcNow(),'dd_MM_yyyy')",
 					"type": "Expression"
 				},
-				"fileSystem": {
-					"value": "@dataset().containername",
-					"type": "Expression"
-				}
+				"fileSystem": "deltaload"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
