@@ -1,0 +1,212 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "adfdevtransform"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_sqlservertodatalakeparameterization')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_sqlservertodatalakeparameterization",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schemaname": {
+						"type": "string"
+					},
+					"Tablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schemaname",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Tablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_sqltodatalakesinkparamtrize')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_sqltodatalakesinkparamtrize",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Containername": {
+						"type": "string"
+					},
+					"dirname": {
+						"type": "string"
+					},
+					"filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().dirname",
+							"type": "Expression"
+						},
+						"fileSystem": {
+							"value": "@dataset().Containername",
+							"type": "Expression"
+						}
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PL_onpremsqltodatalakeparameterization')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "PL_sqltodatalakeparameterization",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_sqlservertodatalakeparameterization",
+								"type": "DatasetReference",
+								"parameters": {
+									"Schemaname": {
+										"value": "@pipeline().parameters.Schemaname",
+										"type": "Expression"
+									},
+									"Tablename": {
+										"value": "@pipeline().parameters.Tablename",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_sqltodatalakesinkparamtrize",
+								"type": "DatasetReference",
+								"parameters": {
+									"Containername": {
+										"value": "@pipeline().parameters.Containername",
+										"type": "Expression"
+									},
+									"dirname": {
+										"value": "@pipeline().parameters.dirname",
+										"type": "Expression"
+									},
+									"filename": {
+										"value": "@pipeline().parameters.filename",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Schemaname": {
+						"type": "string",
+						"defaultValue": "Person"
+					},
+					"Tablename": {
+						"type": "string",
+						"defaultValue": "Address"
+					},
+					"Containername": {
+						"type": "string",
+						"defaultValue": "onpremsql"
+					},
+					"dirname": {
+						"type": "string",
+						"defaultValue": "output"
+					},
+					"filename": {
+						"type": "string",
+						"defaultValue": "Person.Address.csv"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-03-10T16:23:46Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_sqlservertodatalakeparameterization')]",
+				"[concat(variables('factoryId'), '/datasets/DS_sqltodatalakesinkparamtrize')]"
+			]
+		}
+	]
+}

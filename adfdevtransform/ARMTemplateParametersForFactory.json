@@ -23,10 +23,19 @@
 		"LS_DATALAKETOSQL_accountKey": {
 			"value": ""
 		},
+		"LS_DeltalakecopytoADLS_accountKey": {
+			"value": ""
+		},
 		"LS_Getmetablobbinary_connectionString": {
 			"value": ""
 		},
 		"LS_drawin_blob_connectionString": {
+			"value": ""
+		},
+		"LS_getnewwatermark_password": {
+			"value": ""
+		},
+		"LS_getoldwatermark_password": {
 			"value": ""
 		},
 		"LS_sqlservertodatalakeparameterization_password": {
@@ -61,6 +70,27 @@
 		},
 		"LS_DATALAKETOSQL_properties_typeProperties_url": {
 			"value": "https://adlshdfc.dfs.core.windows.net"
+		},
+		"LS_DeltalakecopytoADLS_properties_typeProperties_url": {
+			"value": "https://adlshdfc.dfs.core.windows.net/"
+		},
+		"LS_getnewwatermark_properties_typeProperties_server": {
+			"value": "adffree.database.windows.net"
+		},
+		"LS_getnewwatermark_properties_typeProperties_database": {
+			"value": "free-sql-db-2991689"
+		},
+		"LS_getnewwatermark_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"LS_getoldwatermark_properties_typeProperties_server": {
+			"value": "adffree.database.windows.net"
+		},
+		"LS_getoldwatermark_properties_typeProperties_database": {
+			"value": "freesqldbdestination"
+		},
+		"LS_getoldwatermark_properties_typeProperties_userName": {
+			"value": "sqladmin"
 		},
 		"LS_sqlservertodatalakeparameterization_properties_typeProperties_server": {
 			"value": "ASHISH"

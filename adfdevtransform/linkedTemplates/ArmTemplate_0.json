@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS_DATALAKETOSQL'"
 		},
+		"LS_DeltalakecopytoADLS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_DeltalakecopytoADLS'"
+		},
 		"LS_Getmetablobbinary_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_Getmetablobbinary'"
@@ -38,6 +42,14 @@
 		"LS_drawin_blob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_drawin_blob'"
+		},
+		"LS_getnewwatermark_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_getnewwatermark'"
+		},
+		"LS_getoldwatermark_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_getoldwatermark'"
 		},
 		"LS_ADLSTOSQLSERVER_properties_typeProperties_url": {
 			"type": "string",
@@ -74,6 +86,34 @@
 		"LS_DATALAKETOSQL_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adlshdfc.dfs.core.windows.net"
+		},
+		"LS_DeltalakecopytoADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlshdfc.dfs.core.windows.net/"
+		},
+		"LS_getnewwatermark_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adffree.database.windows.net"
+		},
+		"LS_getnewwatermark_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "free-sql-db-2991689"
+		},
+		"LS_getnewwatermark_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_getoldwatermark_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adffree.database.windows.net"
+		},
+		"LS_getoldwatermark_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "freesqldbdestination"
+		},
+		"LS_getoldwatermark_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
 		}
 	},
 	"variables": {
@@ -189,6 +229,23 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LS_DeltalakecopytoADLS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('LS_DeltalakecopytoADLS_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('LS_DeltalakecopytoADLS_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LS_Getmetablobbinary')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -211,6 +268,51 @@
 				"type": "AzureBlobStorage",
 				"typeProperties": {
 					"connectionString": "[parameters('LS_drawin_blob_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_getnewwatermark')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "To pick changes or get watermark we uses source database table",
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_getnewwatermark_properties_typeProperties_server')]",
+					"database": "[parameters('LS_getnewwatermark_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_getnewwatermark_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_getnewwatermark_password')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LS_getoldwatermark')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"server": "[parameters('LS_getoldwatermark_properties_typeProperties_server')]",
+					"database": "[parameters('LS_getoldwatermark_properties_typeProperties_database')]",
+					"encrypt": "mandatory",
+					"trustServerCertificate": true,
+					"authenticationType": "SQL",
+					"userName": "[parameters('LS_getoldwatermark_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LS_getoldwatermark_password')]"
+					}
 				}
 			},
 			"dependsOn": []
@@ -563,134 +665,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LS_DATALAKETOSQL')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_copydataadls')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_DATALAKETOSQL",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"containername": {
-						"type": "string"
-					},
-					"Dirname": {
-						"type": "string"
-					},
-					"Filename": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().Filename",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().Dirname",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().containername",
-							"type": "Expression"
-						}
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_DATALAKETOSQL')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_getmetadata')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_DATALAKETOSQL",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"DS_Containername": {
-						"type": "string"
-					},
-					"DS_Dirname": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"folderPath": {
-							"value": "@dataset().DS_Dirname",
-							"type": "Expression"
-						},
-						"fileSystem": {
-							"value": "@dataset().DS_Containername",
-							"type": "Expression"
-						}
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_DATALAKETOSQL')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dsBatfile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_drawin_blob",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"dsContainername": {
-						"type": "string"
-					},
-					"dsDirName": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"folderPath": {
-							"value": "@dataset().dsDirName",
-							"type": "Expression"
-						},
-						"container": {
-							"value": "@dataset().dsContainername",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_drawin_blob')]"
 			]
 		}
 	]

@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'LS_DATALAKETOSQL'"
 		},
+		"LS_DeltalakecopytoADLS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_DeltalakecopytoADLS'"
+		},
 		"LS_Getmetablobbinary_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_Getmetablobbinary'"
@@ -38,6 +42,14 @@
 		"LS_drawin_blob_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LS_drawin_blob'"
+		},
+		"LS_getnewwatermark_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_getnewwatermark'"
+		},
+		"LS_getoldwatermark_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_getoldwatermark'"
 		},
 		"LS_sqlservertodatalakeparameterization_password": {
 			"type": "secureString",
@@ -82,6 +94,34 @@
 		"LS_DATALAKETOSQL_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://adlshdfc.dfs.core.windows.net"
+		},
+		"LS_DeltalakecopytoADLS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://adlshdfc.dfs.core.windows.net/"
+		},
+		"LS_getnewwatermark_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adffree.database.windows.net"
+		},
+		"LS_getnewwatermark_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "free-sql-db-2991689"
+		},
+		"LS_getnewwatermark_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_getoldwatermark_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "adffree.database.windows.net"
+		},
+		"LS_getoldwatermark_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "freesqldbdestination"
+		},
+		"LS_getoldwatermark_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
 		},
 		"LS_sqlservertodatalakeparameterization_properties_typeProperties_server": {
 			"type": "string",
@@ -144,11 +184,20 @@
 					"LS_DATALAKETOSQL_accountKey": {
 						"value": "[parameters('LS_DATALAKETOSQL_accountKey')]"
 					},
+					"LS_DeltalakecopytoADLS_accountKey": {
+						"value": "[parameters('LS_DeltalakecopytoADLS_accountKey')]"
+					},
 					"LS_Getmetablobbinary_connectionString": {
 						"value": "[parameters('LS_Getmetablobbinary_connectionString')]"
 					},
 					"LS_drawin_blob_connectionString": {
 						"value": "[parameters('LS_drawin_blob_connectionString')]"
+					},
+					"LS_getnewwatermark_password": {
+						"value": "[parameters('LS_getnewwatermark_password')]"
+					},
+					"LS_getoldwatermark_password": {
+						"value": "[parameters('LS_getoldwatermark_password')]"
 					},
 					"LS_ADLSTOSQLSERVER_properties_typeProperties_url": {
 						"value": "[parameters('LS_ADLSTOSQLSERVER_properties_typeProperties_url')]"
@@ -176,6 +225,27 @@
 					},
 					"LS_DATALAKETOSQL_properties_typeProperties_url": {
 						"value": "[parameters('LS_DATALAKETOSQL_properties_typeProperties_url')]"
+					},
+					"LS_DeltalakecopytoADLS_properties_typeProperties_url": {
+						"value": "[parameters('LS_DeltalakecopytoADLS_properties_typeProperties_url')]"
+					},
+					"LS_getnewwatermark_properties_typeProperties_server": {
+						"value": "[parameters('LS_getnewwatermark_properties_typeProperties_server')]"
+					},
+					"LS_getnewwatermark_properties_typeProperties_database": {
+						"value": "[parameters('LS_getnewwatermark_properties_typeProperties_database')]"
+					},
+					"LS_getnewwatermark_properties_typeProperties_userName": {
+						"value": "[parameters('LS_getnewwatermark_properties_typeProperties_userName')]"
+					},
+					"LS_getoldwatermark_properties_typeProperties_server": {
+						"value": "[parameters('LS_getoldwatermark_properties_typeProperties_server')]"
+					},
+					"LS_getoldwatermark_properties_typeProperties_database": {
+						"value": "[parameters('LS_getoldwatermark_properties_typeProperties_database')]"
+					},
+					"LS_getoldwatermark_properties_typeProperties_userName": {
+						"value": "[parameters('LS_getoldwatermark_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -217,6 +287,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'adfdevtransform_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adfdevtransform_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adfdevtransform_ArmTemplate_1')]"
 			]
 		}
 	]
