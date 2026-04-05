@@ -1,0 +1,12 @@
+{
+	"name": "DS_Deltaload_SRCSQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_getnewwatermark",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}

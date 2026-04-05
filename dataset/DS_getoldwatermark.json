@@ -1,0 +1,23 @@
+{
+	"name": "DS_getoldwatermark",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_getoldwatermark",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "WatermarkValue",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "watermarktable"
+		}
+	}
+}
