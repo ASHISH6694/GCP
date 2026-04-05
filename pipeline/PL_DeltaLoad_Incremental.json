@@ -54,8 +54,6 @@
 			{
 				"name": "CopydatabetweenbothWatermark",
 				"type": "Copy",
-				"state": "Inactive",
-				"onInactiveMarkAs": "Succeeded",
 				"dependsOn": [
 					{
 						"activity": "Lookup_getoldwatermark",
@@ -82,17 +80,42 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "select * from dbo.SalesData where DeliveryDate>@activity('Lookup_getnewwatermark').output.firstRow.value and DeliveryDate<=@activity('Lookup_getnewwatermark').output.value",
+							"value": "select * from dbo.SalesData where DeliveryDate>@activity('Lookup_getoldwatermark').output.firstRow.WatermarkValue and DeliveryDate<=@activity('Lookup_getnewwatermark').output.NewWaterMark",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
 				},
 				"inputs": [
 					{
 						"referenceName": "DS_Deltaload_SRCSQL",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_DeltalakecopytoADLS",
 						"type": "DatasetReference"
 					}
 				]
