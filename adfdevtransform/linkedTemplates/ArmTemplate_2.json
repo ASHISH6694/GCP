@@ -13,6 +13,39 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_sqlservertodatalakeparameterization')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_sqlservertodatalakeparameterization",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Schemaname": {
+						"type": "string"
+					},
+					"Tablename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().Schemaname",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().Tablename",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_sqltodatalakesinkparamtrize')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -60,7 +93,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/pipDrawin_copy1')]",
+			"name": "[concat(parameters('factoryName'), '/pipDrawin_copy2')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -194,14 +227,14 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[[dbo].[uspDBA_CheckForFiles]",
+										"storedProcedureName": "[[dbo].[uspDBA_CheckForFiles_new]",
 										"storedProcedureParameters": {
 											"pFileDate": {
 												"value": {
-													"value": "@activity('innerGetFileMetadata').output.lastModified",
+													"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
 													"type": "Expression"
 												},
-												"type": "DateTime"
+												"type": "Datetime"
 											},
 											"pFileDateFormat": {
 												"value": {
@@ -383,6 +416,7 @@
 				"lastPublishTime": "2026-03-10T16:23:46Z"
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_sqlservertodatalakeparameterization')]",
 				"[concat(variables('factoryId'), '/datasets/DS_sqltodatalakesinkparamtrize')]"
 			]
 		}
