@@ -1,5 +1,5 @@
 {
-	"name": "pipDrawin_copy1",
+	"name": "pipDrawin_copy2",
 	"properties": {
 		"activities": [
 			{
@@ -131,14 +131,14 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[uspDBA_CheckForFiles]",
+								"storedProcedureName": "[dbo].[uspDBA_CheckForFiles_new]",
 								"storedProcedureParameters": {
 									"pFileDate": {
 										"value": {
-											"value": "@activity('innerGetFileMetadata').output.lastModified",
+											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
 											"type": "Expression"
 										},
-										"type": "String"
+										"type": "Datetime"
 									},
 									"pFileDateFormat": {
 										"value": {
