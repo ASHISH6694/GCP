@@ -135,35 +135,35 @@
 								"storedProcedureParameters": {
 									"pFileDate": {
 										"value": {
-											"value": "@item().lastModified",
+											"value": "@activity('innerGetFileMetadata').output.lastModified",
 											"type": "Expression"
 										},
 										"type": "DateTime"
 									},
 									"pFileDateFormat": {
 										"value": {
-											"value": "@formatDateTime(item().lastModified, 'yyyyMMdd')",
+											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyyMMdd')",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileExtension": {
 										"value": {
-											"value": "@split(item().name, '.' )[1]",
+											"value": "@split(activity('innerGetFileMetadata').output.itemName, '.')[1]",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFilename": {
 										"value": {
-											"value": "@item().name",
+											"value": "@activity('innerGetFileMetadata').output.itemName",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileSize": {
 										"value": {
-											"value": "@item().size",
+											"value": "@activity('innerGetFileMetadata').output.size",
 											"type": "Expression"
 										},
 										"type": "Int64"
