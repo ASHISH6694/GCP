@@ -393,72 +393,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PL_Darwinxsample')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "GetMetaDatadatfile",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "DS_Binarygetmetadata",
-								"type": "DatasetReference",
-								"parameters": {
-									"DS_Contname": {
-										"value": "@pipeline().parameters.Meta_Containername",
-										"type": "Expression"
-									},
-									"DS_Dirname": {
-										"value": "@pipeline().parameters.Meta_Directoryname",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"Meta_Containername": {
-						"type": "string",
-						"defaultValue": "darwinx"
-					},
-					"Meta_Directoryname": {
-						"type": "string",
-						"defaultValue": "landing"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Binarygetmetadata')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/PL_DeltaLoad_Incremental')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -659,7 +593,7 @@
 								"upsertSettings": {
 									"useTempDB": true,
 									"keys": [
-										"OrderID"
+										"CustomerGroup"
 									]
 								},
 								"sqlWriterUseTableLock": false,
@@ -1216,7 +1150,14 @@
 								{
 									"name": "innerGetFileMetadata",
 									"type": "GetMetadata",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "If Condition1",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"retry": 0,
 										"retryIntervalInSeconds": 30,
@@ -1245,7 +1186,8 @@
 										},
 										"fieldList": [
 											"itemName",
-											"size"
+											"size",
+											"lastModified"
 										],
 										"storeSettings": {
 											"type": "AzureBlobStorageReadSettings",
@@ -1276,18 +1218,39 @@
 									},
 									"userProperties": [],
 									"typeProperties": {
-										"storedProcedureName": "[[dbo].[uspDBA_UpsertFileFromBlob]",
+										"storedProcedureName": "[[dbo].[uspDBA_CheckForFiles]",
 										"storedProcedureParameters": {
-											"pFileName": {
+											"pFileDate": {
 												"value": {
-													"value": "@activity('innerGetFileMetadata').output.itemName",
+													"value": "@item().lastModified",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"pFileDateFormat": {
+												"value": {
+													"value": "@formatDateTime(item().lastModified, 'yyyyMMdd')",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"pFileExtension": {
+												"value": {
+													"value": "@split(item().name, '.' )[1]",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"pFilename": {
+												"value": {
+													"value": "@item().name",
 													"type": "Expression"
 												},
 												"type": "String"
 											},
 											"pFileSize": {
 												"value": {
-													"value": "@activity('innerGetFileMetadata').output.size",
+													"value": "@item().size",
 													"type": "Expression"
 												},
 												"type": "Int64"
@@ -1297,6 +1260,18 @@
 									"linkedServiceName": {
 										"referenceName": "LS_AzureSQLDB",
 										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@endsWith(toLower(item().name), '.dat')",
+											"type": "Expression"
+										}
 									}
 								}
 							]
