@@ -193,7 +193,7 @@
 						"upsertSettings": {
 							"useTempDB": true,
 							"keys": [
-								"OrderID"
+								"CustomerGroup"
 							]
 						},
 						"sqlWriterUseTableLock": false,
