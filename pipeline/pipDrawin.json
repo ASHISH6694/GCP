@@ -63,7 +63,14 @@
 						{
 							"name": "innerGetFileMetadata",
 							"type": "GetMetadata",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "If Condition1",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"retry": 0,
 								"retryIntervalInSeconds": 30,
@@ -92,7 +99,8 @@
 								},
 								"fieldList": [
 									"itemName",
-									"size"
+									"size",
+									"lastModified"
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
@@ -123,18 +131,39 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[dbo].[uspDBA_UpsertFileFromBlob]",
+								"storedProcedureName": "[dbo].[uspDBA_CheckForFiles]",
 								"storedProcedureParameters": {
-									"pFileName": {
+									"pFileDate": {
 										"value": {
-											"value": "@activity('innerGetFileMetadata').output.itemName",
+											"value": "@item().lastModified",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"pFileDateFormat": {
+										"value": {
+											"value": "@formatDateTime(item().lastModified, 'yyyyMMdd')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pFileExtension": {
+										"value": {
+											"value": "@split(item().name, '.' )[1]",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pFilename": {
+										"value": {
+											"value": "@item().name",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileSize": {
 										"value": {
-											"value": "@activity('innerGetFileMetadata').output.size",
+											"value": "@item().size",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -144,6 +173,18 @@
 							"linkedServiceName": {
 								"referenceName": "LS_AzureSQLDB",
 								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@endsWith(toLower(item().name), '.dat')",
+									"type": "Expression"
+								}
 							}
 						}
 					]
