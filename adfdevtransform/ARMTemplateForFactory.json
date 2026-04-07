@@ -2009,8 +2009,6 @@
 					{
 						"name": "getFilemetadata",
 						"type": "GetMetadata",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [],
 						"policy": {
 							"retry": 0,
@@ -2050,8 +2048,6 @@
 					{
 						"name": "ForEach1",
 						"type": "ForEach",
-						"state": "Inactive",
-						"onInactiveMarkAs": "Succeeded",
 						"dependsOn": [
 							{
 								"activity": "getFilemetadata",
@@ -2220,7 +2216,14 @@
 					{
 						"name": "LKP_CheckfileCount",
 						"type": "Lookup",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "0.12:00:00",
 							"retry": 0,
@@ -2445,6 +2448,7 @@
 										],
 										"storeSettings": {
 											"type": "AzureBlobStorageReadSettings",
+											"recursive": true,
 											"enablePartitionDiscovery": false
 										},
 										"formatSettings": {
@@ -3210,6 +3214,50 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_innergetmetadatafilemove')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Getmetablobbinary",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"innercontainername": {
+						"type": "string"
+					},
+					"innerdirectoryname": {
+						"type": "string"
+					},
+					"innerfilename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().innerfilename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().innerdirectoryname",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().innercontainername",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LS_Getmetablobbinary')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_sinkfordeltaloadsql')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3748,50 +3796,6 @@
 				"typeProperties": {}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_innergetmetadatafilemove')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Getmetablobbinary",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"innercontainername": {
-						"type": "string"
-					},
-					"innerdirectoryname": {
-						"type": "string"
-					},
-					"innerfilename": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().innerfilename",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().innerdirectoryname",
-							"type": "Expression"
-						},
-						"container": {
-							"value": "@dataset().innercontainername",
-							"type": "Expression"
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LS_Getmetablobbinary')]"
-			]
 		}
 	]
 }

@@ -357,6 +357,48 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_innergetmetadatafilemove')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Getmetablobbinary",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"innercontainername": {
+						"type": "string"
+					},
+					"innerdirectoryname": {
+						"type": "string"
+					},
+					"innerfilename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().innerfilename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().innerdirectoryname",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().innercontainername",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_sinkfordeltaloadsql')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -587,48 +629,6 @@
 				"connectVia": {
 					"referenceName": "OnpremtoDL",
 					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_innergetmetadatafilemove')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LS_Getmetablobbinary",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"innercontainername": {
-						"type": "string"
-					},
-					"innerdirectoryname": {
-						"type": "string"
-					},
-					"innerfilename": {
-						"type": "string"
-					}
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@dataset().innerfilename",
-							"type": "Expression"
-						},
-						"folderPath": {
-							"value": "@dataset().innerdirectoryname",
-							"type": "Expression"
-						},
-						"container": {
-							"value": "@dataset().innercontainername",
-							"type": "Expression"
-						}
-					}
 				}
 			},
 			"dependsOn": []
