@@ -1,0 +1,39 @@
+{
+	"name": "DS_innergetmetadatafilemove",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_Getmetablobbinary",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"innercontainername": {
+				"type": "string"
+			},
+			"innerdirectoryname": {
+				"type": "string"
+			},
+			"innerfilename": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@dataset().innerfilename",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().innerdirectoryname",
+					"type": "Expression"
+				},
+				"container": {
+					"value": "@dataset().innercontainername",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}
