@@ -255,15 +255,13 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('innergetmetadatafilemove').output.childItems",
+						"value": "@activity('GetMetadatatoMove').output.childItems",
 						"type": "Expression"
 					},
 					"activities": [
 						{
 							"name": "Copydatagetmetadata",
 							"type": "Copy",
-							"state": "Inactive",
-							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [
 								{
 									"activity": "innergetmetadatafilemove",
@@ -343,8 +341,6 @@
 						{
 							"name": "Stored procedure1",
 							"type": "SqlServerStoredProcedure",
-							"state": "Inactive",
-							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [
 								{
 									"activity": "Copydatagetmetadata",
@@ -438,7 +434,9 @@
 									}
 								},
 								"fieldList": [
-									"childItems"
+									"lastModified",
+									"itemName",
+									"size"
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
