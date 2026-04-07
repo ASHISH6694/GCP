@@ -255,7 +255,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetMetadatatoMove').output.childItems",
+						"value": "@activity('GetMetadatatoMove').output.childItems\n",
 						"type": "Expression"
 					},
 					"activities": [
@@ -324,7 +324,7 @@
 											"type": "Expression"
 										},
 										"Filename": {
-											"value": "@activity('GetMetadatatoMove').output.childItems",
+											"value": "@item().name",
 											"type": "Expression"
 										}
 									}
@@ -362,25 +362,28 @@
 									},
 									"pFileDateFormat": {
 										"value": {
-											"value": "@formatDateTime(activity('Copydatagetmetadata').output.lastModified, 'yyyyMMdd')\n",
+											"value": "@formatDateTime(activity('GetMetadatatoMove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileExtension": {
 										"value": {
-											"value": "@split(activity('Copydatagetmetadata').output.itemName, '.')[1]",
+											"value": "@split(activity('GetMetadatatoMove').output.itemName, '.')[1]",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFilename": {
-										"value": "@activity('Copydatagetmetadata').output.itemName",
+										"value": {
+											"value": "@activity('GetMetadatatoMove').output.itemName",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"pFileSize": {
 										"value": {
-											"value": "@activity('Copydatagetmetadata').output.size",
+											"value": "@activity('GetMetadatatoMove').output.size",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -430,7 +433,8 @@
 						}
 					},
 					"fieldList": [
-						"childItems"
+						"childItems",
+						"lastModified"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
