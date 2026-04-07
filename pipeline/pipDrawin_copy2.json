@@ -195,7 +195,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "ForEach1",
+						"activity": "If Condition2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -203,6 +203,10 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
+					"items": {
+						"value": "@activity('getFilemetadata').output.childItems",
+						"type": "Expression"
+					},
 					"activities": [
 						{
 							"name": "Copydatagetmetadata",
@@ -295,23 +299,38 @@
 								"storedProcedureName": "[dbo].[DBA_MoveFiles_MI]",
 								"storedProcedureParameters": {
 									"pFileDate": {
-										"value": "",
+										"value": {
+											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+											"type": "Expression"
+										},
 										"type": "DateTime"
 									},
 									"pFileDateFormat": {
-										"value": "",
+										"value": {
+											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyyMMdd')",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"pFileExtension": {
-										"value": "",
+										"value": {
+											"value": "@split(activity('innerGetFileMetadata').output.itemName, '.')[1]",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"pFilename": {
-										"value": "",
+										"value": {
+											"value": "@activity('innerGetFileMetadata').output.itemName",
+											"type": "Expression"
+										},
 										"type": "String"
 									},
 									"pFileSize": {
-										"value": "",
+										"value": {
+											"value": "@activity('innerGetFileMetadata').output.size",
+											"type": "Expression"
+										},
 										"type": "Int64"
 									}
 								}
@@ -322,6 +341,60 @@
 							}
 						}
 					]
+				}
+			},
+			{
+				"name": "If Condition2",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "LKP_CheckfileCount",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(activity('LKP_CheckfileCount').output\n.firstRow.FileCount, 13)\n\n",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "LKP_CheckfileCount",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "SELECT COUNT(*) as FileCount FROM [dbo].[FileChecker] WHERE \nfiledateformat=convert(varchar,getdate(),112) and completed IS NULL\n",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_getnewwatermark",
+						"type": "DatasetReference"
+					}
 				}
 			}
 		],
