@@ -1,0 +1,28 @@
+{
+	"name": "DS_copydatafromlandingtoprocessedfiles",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_drawin_blob",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"container": {
+				"type": "string"
+			},
+			"Directory": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": {
+					"value": "@dataset().container",
+					"type": "Expression"
+				}
+			}
+		}
+	}
+}

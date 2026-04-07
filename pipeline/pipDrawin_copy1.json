@@ -199,6 +199,10 @@
 			"pipDirname": {
 				"type": "string",
 				"defaultValue": "landing"
+			},
+			"pipOutputdirectoryname": {
+				"type": "string",
+				"defaultValue": "processedfiles"
 			}
 		},
 		"annotations": []
