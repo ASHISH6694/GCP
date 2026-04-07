@@ -508,6 +508,79 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_copyfilesfromsourcetodestination')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_Getmetablobbinary",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"containername": {
+						"type": "string"
+					},
+					"Directoryname": {
+						"type": "string"
+					},
+					"Filename": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@dataset().Filename",
+							"type": "Expression"
+						},
+						"folderPath": {
+							"value": "@dataset().Directoryname",
+							"type": "Expression"
+						},
+						"container": {
+							"value": "@dataset().containername",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_copydatafromlandingtoprocessedfiles')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LS_drawin_blob",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"container": {
+						"type": "string"
+					},
+					"Directory": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": {
+							"value": "@dataset().container",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_BLOBTOADLS_TRIGGERING')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1320,436 +1393,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_getmetadata')]",
 				"[concat(variables('factoryId'), '/datasets/DS_copydataadls')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipDrawin')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "getFilemetadata",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "dsdatfile",
-								"type": "DatasetReference",
-								"parameters": {
-									"Containername": {
-										"value": "@pipeline().parameters.pipContainername",
-										"type": "Expression"
-									},
-									"Dirname": {
-										"value": "@pipeline().parameters.pipDirname",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": false,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "getFilemetadata",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('getFilemetadata').output.childItems",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"activities": [
-								{
-									"name": "innerGetFileMetadata",
-									"type": "GetMetadata",
-									"dependsOn": [
-										{
-											"activity": "If Condition1",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "dsGetBlobFilemetadata",
-											"type": "DatasetReference",
-											"parameters": {
-												"Filename": {
-													"value": "@item().name",
-													"type": "Expression"
-												},
-												"DIRName": {
-													"value": "@pipeline().parameters.pipDirname",
-													"type": "Expression"
-												},
-												"Containername": {
-													"value": "@pipeline().parameters.pipContainername",
-													"type": "Expression"
-												}
-											}
-										},
-										"fieldList": [
-											"itemName",
-											"size",
-											"lastModified"
-										],
-										"storeSettings": {
-											"type": "AzureBlobStorageReadSettings",
-											"recursive": false,
-											"enablePartitionDiscovery": false
-										},
-										"formatSettings": {
-											"type": "BinaryReadSettings"
-										}
-									}
-								},
-								{
-									"name": "uspDBA_UpsertFileFromBlob_copy1",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "innerGetFileMetadata",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[dbo].[uspDBA_CheckForFiles]",
-										"storedProcedureParameters": {
-											"pFileDate": {
-												"value": {
-													"value": "@item().lastModified",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"pFileDateFormat": {
-												"value": {
-													"value": "@formatDateTime(item().lastModified, 'yyyyMMdd')",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFileExtension": {
-												"value": {
-													"value": "@split(item().name, '.' )[1]",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFilename": {
-												"value": {
-													"value": "@item().name",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFileSize": {
-												"value": {
-													"value": "@item().size",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "LS_AzureSQLDB",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "If Condition1",
-									"type": "IfCondition",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"expression": {
-											"value": "@endsWith(toLower(item().name), '.dat')",
-											"type": "Expression"
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"pipContainername": {
-						"type": "string",
-						"defaultValue": "darwinx"
-					},
-					"pipDirname": {
-						"type": "string",
-						"defaultValue": "landing"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dsdatfile')]",
-				"[concat(variables('factoryId'), '/datasets/dsGetBlobFilemetadata')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipDrawin_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "getFilemetadata",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "dsdatfile",
-								"type": "DatasetReference",
-								"parameters": {
-									"Containername": {
-										"value": "@pipeline().parameters.pipContainername",
-										"type": "Expression"
-									},
-									"Dirname": {
-										"value": "@pipeline().parameters.pipDirname",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobStorageReadSettings",
-								"recursive": false,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "getFilemetadata",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('getFilemetadata').output.childItems",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"activities": [
-								{
-									"name": "innerGetFileMetadata",
-									"type": "GetMetadata",
-									"dependsOn": [
-										{
-											"activity": "If Condition1",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"dataset": {
-											"referenceName": "dsGetBlobFilemetadata",
-											"type": "DatasetReference",
-											"parameters": {
-												"Filename": {
-													"value": "@item().name",
-													"type": "Expression"
-												},
-												"DIRName": {
-													"value": "@pipeline().parameters.pipDirname",
-													"type": "Expression"
-												},
-												"Containername": {
-													"value": "@pipeline().parameters.pipContainername",
-													"type": "Expression"
-												}
-											}
-										},
-										"fieldList": [
-											"itemName",
-											"size",
-											"lastModified"
-										],
-										"storeSettings": {
-											"type": "AzureBlobStorageReadSettings",
-											"recursive": false,
-											"enablePartitionDiscovery": false
-										},
-										"formatSettings": {
-											"type": "BinaryReadSettings"
-										}
-									}
-								},
-								{
-									"name": "uspDBA_UpsertFileFromBlob_copy1",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "innerGetFileMetadata",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[dbo].[uspDBA_CheckForFiles]",
-										"storedProcedureParameters": {
-											"pFileDate": {
-												"value": {
-													"value": "@activity('innerGetFileMetadata').output.lastModified",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFileDateFormat": {
-												"value": {
-													"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyyMMdd')",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFileExtension": {
-												"value": {
-													"value": "@split(activity('innerGetFileMetadata').output.itemName, '.')[1]",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFilename": {
-												"value": {
-													"value": "@activity('innerGetFileMetadata').output.itemName",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"pFileSize": {
-												"value": {
-													"value": "@activity('innerGetFileMetadata').output.size",
-													"type": "Expression"
-												},
-												"type": "Int64"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "LS_AzureSQLDB",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "If Condition1",
-									"type": "IfCondition",
-									"dependsOn": [],
-									"userProperties": [],
-									"typeProperties": {
-										"expression": {
-											"value": "@endsWith(toLower(item().name), '.dat')",
-											"type": "Expression"
-										}
-									}
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {}
-				},
-				"parameters": {
-					"pipContainername": {
-						"type": "string",
-						"defaultValue": "darwinx"
-					},
-					"pipDirname": {
-						"type": "string",
-						"defaultValue": "landing"
-					}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/dsdatfile')]",
-				"[concat(variables('factoryId'), '/datasets/dsGetBlobFilemetadata')]"
 			]
 		}
 	]
