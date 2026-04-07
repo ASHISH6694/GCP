@@ -262,7 +262,14 @@
 						{
 							"name": "Copydatagetmetadata",
 							"type": "Copy",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "innergetmetadatafilemove",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -394,6 +401,51 @@
 								"referenceName": "LS_getnewwatermark",
 								"type": "LinkedServiceReference"
 							}
+						},
+						{
+							"name": "innergetmetadatafilemove",
+							"type": "GetMetadata",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"dataset": {
+									"referenceName": "DS_innergetmetadatafilemove",
+									"type": "DatasetReference",
+									"parameters": {
+										"innercontainername": {
+											"value": "@pipeline().parameters.pipContainername",
+											"type": "Expression"
+										},
+										"innerdirectoryname": {
+											"value": "@pipeline().parameters.pipDirname",
+											"type": "Expression"
+										},
+										"innerfilename": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								},
+								"fieldList": [
+									"childItems",
+									"lastModified",
+									"size"
+								],
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							}
 						}
 					]
 				}
@@ -433,8 +485,7 @@
 						}
 					},
 					"fieldList": [
-						"childItems",
-						"lastModified"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobStorageReadSettings",
