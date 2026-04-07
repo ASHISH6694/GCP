@@ -443,6 +443,7 @@
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
@@ -508,11 +509,11 @@
 			},
 			"pipDirname": {
 				"type": "string",
-				"defaultValue": "landing"
+				"defaultValue": "landing1"
 			},
 			"pipoutputdirectoryname": {
 				"type": "string",
-				"defaultValue": "processedfiles"
+				"defaultValue": "Processedfiles"
 			}
 		},
 		"annotations": []
