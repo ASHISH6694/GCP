@@ -13,6 +13,183 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_getmetadatacopydatasql')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "DS_getmetadata",
+								"type": "DatasetReference",
+								"parameters": {
+									"DS_Containername": {
+										"value": "@pipeline().parameters.Containername",
+										"type": "Expression"
+									},
+									"DS_Dirname": {
+										"value": "@pipeline().parameters.Dirname",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{pipeline().parameters.Containername}/@{pipeline().parameters.Dirname}/@{item().name}"
+										},
+										{
+											"name": "Destination",
+											"value": "@{pipeline().parameters.Schemaname}.@{split(item().name, '.')[0]}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false,
+											"tableOption": "autoCreate",
+											"disableMetricsCollection": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_copydataadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"containername": {
+													"value": "@pipeline().parameters.Containername",
+													"type": "Expression"
+												},
+												"Dirname": {
+													"value": "@pipeline().parameters.Dirname",
+													"type": "Expression"
+												},
+												"Filename": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_CopydataSQL",
+											"type": "DatasetReference",
+											"parameters": {
+												"schemaname": {
+													"value": "@pipeline().parameters.Schemaname",
+													"type": "Expression"
+												},
+												"tablename": {
+													"value": "@split(item().name, '.')[0]",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"parameters": {
+					"Containername": {
+						"type": "string",
+						"defaultValue": "landing"
+					},
+					"Dirname": {
+						"type": "string",
+						"defaultValue": "copydata"
+					},
+					"Schemaname": {
+						"type": "string",
+						"defaultValue": "dbo"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2026-04-01T14:55:07Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/pipDrawin')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1173,14 +1350,21 @@
 						"userProperties": [],
 						"typeProperties": {
 							"items": {
-								"value": "@activity('GetMetadatatoMove').output.childItems\n",
+								"value": "@activity('GetMetadatatoMove').output.childItems",
 								"type": "Expression"
 							},
 							"activities": [
 								{
 									"name": "Copydatagetmetadata",
 									"type": "Copy",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "innergetmetadatafilemove",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "0.12:00:00",
 										"retry": 0,
@@ -1273,35 +1457,35 @@
 										"storedProcedureParameters": {
 											"pFileDate": {
 												"value": {
-													"value": "@formatDateTime(activity('GetMetadatatoMove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+													"value": "@formatDateTime(activity('innergetmetadatafilemove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')\n",
 													"type": "Expression"
 												},
 												"type": "DateTime"
 											},
 											"pFileDateFormat": {
 												"value": {
-													"value": "@formatDateTime(activity('GetMetadatatoMove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+													"value": "@formatDateTime(activity('innergetmetadatafilemove').output.lastModified, 'yyyyMMdd')",
 													"type": "Expression"
 												},
 												"type": "String"
 											},
 											"pFileExtension": {
 												"value": {
-													"value": "@split(activity('GetMetadatatoMove').output.itemName, '.')[1]",
+													"value": "@split(activity('innergetmetadatafilemove').output.itemName, '.')[1]",
 													"type": "Expression"
 												},
 												"type": "String"
 											},
 											"pFilename": {
 												"value": {
-													"value": "@activity('GetMetadatatoMove').output.itemName",
+													"value": "@activity('innergetmetadatafilemove').output.itemName",
 													"type": "Expression"
 												},
 												"type": "String"
 											},
 											"pFileSize": {
 												"value": {
-													"value": "@activity('GetMetadatatoMove').output.size",
+													"value": "@activity('innergetmetadatafilemove').output.size",
 													"type": "Expression"
 												},
 												"type": "Int64"
@@ -1311,6 +1495,51 @@
 									"linkedServiceName": {
 										"referenceName": "LS_getnewwatermark",
 										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "innergetmetadatafilemove",
+									"type": "GetMetadata",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "DS_innergetmetadatafilemove",
+											"type": "DatasetReference",
+											"parameters": {
+												"innercontainername": {
+													"value": "@pipeline().parameters.pipContainername",
+													"type": "Expression"
+												},
+												"innerdirectoryname": {
+													"value": "@pipeline().parameters.pipDirname",
+													"type": "Expression"
+												},
+												"innerfilename": {
+													"value": "@item().name",
+													"type": "Expression"
+												}
+											}
+										},
+										"fieldList": [
+											"lastModified",
+											"itemName",
+											"size"
+										],
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"enablePartitionDiscovery": false
+										},
+										"formatSettings": {
+											"type": "BinaryReadSettings"
+										}
 									}
 								}
 							]
@@ -1351,8 +1580,7 @@
 								}
 							},
 							"fieldList": [
-								"childItems",
-								"lastModified"
+								"childItems"
 							],
 							"storeSettings": {
 								"type": "AzureBlobStorageReadSettings",
