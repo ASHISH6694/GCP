@@ -255,13 +255,15 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('GetMetadatatoMove').output.childItems\n",
+						"value": "@activity('innergetmetadatafilemove').output.childItems",
 						"type": "Expression"
 					},
 					"activities": [
 						{
 							"name": "Copydatagetmetadata",
 							"type": "Copy",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [
 								{
 									"activity": "innergetmetadatafilemove",
@@ -341,6 +343,8 @@
 						{
 							"name": "Stored procedure1",
 							"type": "SqlServerStoredProcedure",
+							"state": "Inactive",
+							"onInactiveMarkAs": "Succeeded",
 							"dependsOn": [
 								{
 									"activity": "Copydatagetmetadata",
@@ -362,35 +366,35 @@
 								"storedProcedureParameters": {
 									"pFileDate": {
 										"value": {
-											"value": "@formatDateTime(activity('GetMetadatatoMove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+											"value": "@formatDateTime(activity('innergetmetadatafilemove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')\n",
 											"type": "Expression"
 										},
 										"type": "DateTime"
 									},
 									"pFileDateFormat": {
 										"value": {
-											"value": "@formatDateTime(activity('GetMetadatatoMove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+											"value": "@formatDateTime(activity('innergetmetadatafilemove').output.lastModified, 'yyyyMMdd')",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileExtension": {
 										"value": {
-											"value": "@split(activity('GetMetadatatoMove').output.itemName, '.')[1]",
+											"value": "@split(activity('innergetmetadatafilemove').output.itemName, '.')[1]",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFilename": {
 										"value": {
-											"value": "@activity('GetMetadatatoMove').output.itemName",
+											"value": "@activity('innergetmetadatafilemove').output.itemName",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileSize": {
 										"value": {
-											"value": "@activity('GetMetadatatoMove').output.size",
+											"value": "@activity('innergetmetadatafilemove').output.size",
 											"type": "Expression"
 										},
 										"type": "Int64"
@@ -434,9 +438,7 @@
 									}
 								},
 								"fieldList": [
-									"childItems",
-									"lastModified",
-									"size"
+									"childItems"
 								],
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
