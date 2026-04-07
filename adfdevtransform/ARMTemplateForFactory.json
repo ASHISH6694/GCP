@@ -2517,11 +2517,11 @@
 					},
 					"pipDirname": {
 						"type": "string",
-						"defaultValue": "landing"
+						"defaultValue": "landing1"
 					},
 					"pipoutputdirectoryname": {
 						"type": "string",
-						"defaultValue": "processedfiles"
+						"defaultValue": "Processedfiles"
 					}
 				},
 				"annotations": []
