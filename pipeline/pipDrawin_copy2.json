@@ -265,7 +265,7 @@
 											"type": "Expression"
 										},
 										"Directory": {
-											"value": "@pipeline().parameters.pipDirname",
+											"value": "@pipeline().parameters.pipoutputdirectoryname",
 											"type": "Expression"
 										}
 									}
@@ -275,7 +275,14 @@
 						{
 							"name": "Stored procedure1",
 							"type": "SqlServerStoredProcedure",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Copydatagetmetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "0.12:00:00",
 								"retry": 0,
@@ -283,7 +290,36 @@
 								"secureOutput": false,
 								"secureInput": false
 							},
-							"userProperties": []
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[DBA_MoveFiles_MI]",
+								"storedProcedureParameters": {
+									"pFileDate": {
+										"value": "",
+										"type": "DateTime"
+									},
+									"pFileDateFormat": {
+										"value": "",
+										"type": "String"
+									},
+									"pFileExtension": {
+										"value": "",
+										"type": "String"
+									},
+									"pFilename": {
+										"value": "",
+										"type": "String"
+									},
+									"pFileSize": {
+										"value": "",
+										"type": "Int64"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_getnewwatermark",
+								"type": "LinkedServiceReference"
+							}
 						}
 					]
 				}
@@ -297,6 +333,10 @@
 			"pipDirname": {
 				"type": "string",
 				"defaultValue": "landing"
+			},
+			"pipoutputdirectoryname": {
+				"type": "string",
+				"defaultValue": "processedfiles"
 			}
 		},
 		"annotations": []
