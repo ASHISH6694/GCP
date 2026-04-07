@@ -366,35 +366,32 @@
 								"storedProcedureParameters": {
 									"pFileDate": {
 										"value": {
-											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+											"value": "@formatDateTime(activity('GetMetadatatoMove').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
 											"type": "Expression"
 										},
 										"type": "DateTime"
 									},
 									"pFileDateFormat": {
 										"value": {
-											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyyMMdd')",
+											"value": "@formatDateTime(activity('Copydatagetmetadata').output.lastModified, 'yyyyMMdd')\n",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFileExtension": {
 										"value": {
-											"value": "@split(activity('innerGetFileMetadata').output.itemName, '.')[1]",
+											"value": "@split(activity('Copydatagetmetadata').output.itemName, '.')[1]",
 											"type": "Expression"
 										},
 										"type": "String"
 									},
 									"pFilename": {
-										"value": {
-											"value": "@activity('innerGetFileMetadata').output.itemName",
-											"type": "Expression"
-										},
+										"value": "@activity('Copydatagetmetadata').output.itemName",
 										"type": "String"
 									},
 									"pFileSize": {
 										"value": {
-											"value": "@activity('innerGetFileMetadata').output.size",
+											"value": "@activity('Copydatagetmetadata').output.size",
 											"type": "Expression"
 										},
 										"type": "Int64"
