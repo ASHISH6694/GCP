@@ -245,63 +245,6 @@
 				}
 			},
 			{
-				"name": "Stored procedure1",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[dbo].[DBA_MoveFiles_MI]",
-					"storedProcedureParameters": {
-						"pFileDate": {
-							"value": {
-								"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
-								"type": "Expression"
-							},
-							"type": "DateTime"
-						},
-						"pFileDateFormat": {
-							"value": {
-								"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyyMMdd')",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"pFileExtension": {
-							"value": {
-								"value": "@split(activity('innerGetFileMetadata').output.itemName, '.')[1]",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"pFilename": {
-							"value": {
-								"value": "@activity('innerGetFileMetadata').output.itemName",
-								"type": "Expression"
-							},
-							"type": "String"
-						},
-						"pFileSize": {
-							"value": {
-								"value": "@activity('innerGetFileMetadata').output.size",
-								"type": "Expression"
-							},
-							"type": "Int64"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "LS_getnewwatermark",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
 				"name": "ForEachFileMove",
 				"type": "ForEach",
 				"dependsOn": [
@@ -362,6 +305,10 @@
 										"Directoryname": {
 											"value": "@pipeline().parameters.pipDirname",
 											"type": "Expression"
+										},
+										"Filename": {
+											"value": "@item().name",
+											"type": "Expression"
 										}
 									}
 								}
@@ -378,10 +325,78 @@
 										"Directory": {
 											"value": "@pipeline().parameters.pipoutputdirectoryname",
 											"type": "Expression"
+										},
+										"Filename": {
+											"value": "@activity('GetMetadatatoMove').output.childItems",
+											"type": "Expression"
 										}
 									}
 								}
 							]
+						},
+						{
+							"name": "Stored procedure1",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copydatagetmetadata",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[DBA_MoveFiles_MI]",
+								"storedProcedureParameters": {
+									"pFileDate": {
+										"value": {
+											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyy-MM-dd HH:mm:ss')",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"pFileDateFormat": {
+										"value": {
+											"value": "@formatDateTime(activity('innerGetFileMetadata').output.lastModified, 'yyyyMMdd')",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pFileExtension": {
+										"value": {
+											"value": "@split(activity('innerGetFileMetadata').output.itemName, '.')[1]",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pFilename": {
+										"value": {
+											"value": "@activity('innerGetFileMetadata').output.itemName",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pFileSize": {
+										"value": {
+											"value": "@activity('innerGetFileMetadata').output.size",
+											"type": "Expression"
+										},
+										"type": "Int64"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_getnewwatermark",
+								"type": "LinkedServiceReference"
+							}
 						}
 					]
 				}
@@ -389,7 +404,14 @@
 			{
 				"name": "GetMetadatatoMove",
 				"type": "GetMetadata",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "If Condition2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
