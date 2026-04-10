@@ -509,7 +509,7 @@
 			},
 			"pipDirname": {
 				"type": "string",
-				"defaultValue": "landing1"
+				"defaultValue": "landing"
 			},
 			"pipoutputdirectoryname": {
 				"type": "string",
