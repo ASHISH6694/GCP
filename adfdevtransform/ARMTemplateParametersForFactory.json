@@ -5,6 +5,9 @@
 		"factoryName": {
 			"value": "adfdevtransform"
 		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
 		"LS_ADLSTOSQLSERVER_accountKey": {
 			"value": ""
 		},

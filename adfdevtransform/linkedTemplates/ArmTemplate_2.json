@@ -13,6 +13,151 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/PL_Foreach')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@variables('Metadata')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copydataforeach",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobFSReadSettings",
+												"recursive": true,
+												"enablePartitionDiscovery": false
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_copydataadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"containername": {
+													"value": "@item().Inputcontainer",
+													"type": "Expression"
+												},
+												"Dirname": {
+													"value": "@item().Inputdirectory",
+													"type": "Expression"
+												},
+												"Filename": {
+													"value": "@item().Inputfile",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_copydataadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"containername": {
+													"value": "@item().Outputcontainer",
+													"type": "Expression"
+												},
+												"Dirname": {
+													"value": "@item().Outputdirectory",
+													"type": "Expression"
+												},
+												"Filename": {
+													"value": "@item().Outputfile",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {}
+				},
+				"variables": {
+					"Metadata": {
+						"type": "Array",
+						"defaultValue": [
+							{
+								"Inputfile": "Department.csv",
+								"Inputcontainer": "landing",
+								"Inputdirectory": "copydata",
+								"Outputfile": "Department.csv",
+								"Outputcontainer": "landing",
+								"Outputdirectory": "Foreach"
+							},
+							{
+								"Inputfile": "Employee.csv",
+								"Inputcontainer": "landing",
+								"Inputdirectory": "copydata",
+								"Outputfile": "Employee.csv",
+								"Outputcontainer": "landing",
+								"Outputdirectory": "Foreach"
+							},
+							{
+								"Inputfile": "Manager.csv",
+								"Inputcontainer": "landing",
+								"Inputdirectory": "copydata",
+								"Outputfile": "Manager.csv",
+								"Outputcontainer": "landing",
+								"Outputdirectory": "Foreach"
+							}
+						]
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PL_getmetadatacopydatasql')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -918,7 +1063,7 @@
 					},
 					"pipDirname": {
 						"type": "string",
-						"defaultValue": "landing1"
+						"defaultValue": "landing"
 					},
 					"pipoutputdirectoryname": {
 						"type": "string",
